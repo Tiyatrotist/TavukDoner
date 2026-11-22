@@ -1,0 +1,11 @@
+﻿build/
+.gradle/
+.idea/
+*.iml
+run/
+local.properties
+.env
+*.log
+worker-out/
+
+worker-tasks/

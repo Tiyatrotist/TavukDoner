@@ -1,0 +1,49 @@
+# Eklenti dili (tr / en)
+language: tr
+
+# Bir chunk (16x16) içerisinde kurulabilecek maksimum şiş sayısı
+max-skewers-per-chunk: 8
+
+# Bir oyuncunun sahip olabileceği maksimum yüklü şiş sayısı (0 = sınırsız)
+max-skewers-per-player: 4
+
+# Şiş çubuğu için kullanılacak eşya materyali
+rod-material: BLAZE_ROD
+
+# Bir şişe takılabilecek maksimum et katmanı sayısı
+max-layers: 8
+
+# Etin tamamen pişmesi için gereken süre (saniye cinsinden)
+cook-time-seconds: 120
+
+# Pişirme ve ısı kontrolü aralığı (tick cinsinden, varsayılan 20 = 1 saniye)
+tick-interval-ticks: 20
+
+# Dönme animasyonunun güncelleneceği maksimum oyuncu mesafesi (blok cinsinden, 0 = her zaman)
+animation-radius: 32
+
+# Şişin saniyedeki dönme hızı (derece cinsinden)
+spin-degrees-per-second: 90
+
+# Her dilimlemede (kılıçla kesildiğinde) verilecek döner dilimi sayısı
+slices-per-cut: 2
+
+# Her tarif üretiminde elde edilecek tavuk döner ekmek adedi
+wraps-per-craft: 1
+
+# Döner ekmek tarifinde domates yerine garnitür olarak kullanılacak malzeme materyali
+topping-material: BEETROOT
+
+# Tavuk döner ekmek ayarları ve besin değerleri
+wrap:
+  # Açlık barı besleme değeri (maksimum 20)
+  nutrition: 10
+  # Doygunluk değeri
+  saturation: 12.0
+  # Seviye başına (tier-1) eklenecek bonus etki süresi (saniye)
+  tier-bonus-seconds: 15
+  # Tüketildiğinde oyuncuya verilecek iksir etkileri (FORMAT: TYPE:saniye:seviye)
+  effects:
+    - "SPEED:30:0"
+    - "RESISTANCE:30:0"
+

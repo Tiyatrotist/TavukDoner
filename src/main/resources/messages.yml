@@ -1,0 +1,55 @@
+tr:
+  no-permission: "<red>Bu komutu kullanmak için yetkiniz yok.</red>"
+  config-reloaded: "<green>TavukDöner yapılandırması yeniden yüklendi.</green>"
+  version-info: "<gold>TavukDöner</gold> <yellow>v<version></yellow> <gray>- Lezzetli dönerler başlasın!</gray>"
+  protection:
+    denied: "<red>Bu bölgede işlem yapamazsın: <reason></red>"
+  items:
+    slice-name: "<gold>Döner Dilimi</gold>"
+    slice-lore:
+      - "<yellow>Şişten taze kesilmiş leziz tavuk döner dilimi.</yellow>"
+    wrap-name: "<gold>Tavuk Döner Ekmek</gold>"
+    wrap-lore:
+      - "<yellow>Taze ekmek arasında leziz tavuk döner.</yellow>"
+    wrap-tier-1: "<gray>Seviye 1: Klasik Döner Ekmek</gray>"
+    wrap-tier-2: "<blue>Seviye 2: Zengin Malzemeli Döner</blue>"
+    wrap-tier-3: "<green>Seviye 3: Full Karışık Döner Ekmek</green>"
+  skewer:
+    placed: "<green>Döner şişi başarıyla kuruldu!</green>"
+    layer-added: "<green>Şişe tavuk eti eklendi (<yellow><layers></yellow>/<gold><max></gold>).</green>"
+    full: "<red>Bu şiş zaten tamamen dolu! Daha fazla et eklenemez.</red>"
+    limit: "<red>Bu chunk için maksimum şiş sınırına ulaşıldı!</red>"
+    player-limit: "<red>Kişisel maksimum şiş sınırınıza ulaştınız!</red>"
+    removed: "<yellow>Döner şişi kaldırıldı ve eşyaları düşürüldü.</yellow>"
+    no-permission: "<red>Döner şişiyle etkileşime geçmek için yetkiniz yok.</red>"
+    sliced: "<green>Döner dilimlendi! Kalan katman: <yellow><layers></yellow></green>"
+    not-cooked: "<red>Şişte henüz pişmiş et yok!</red>"
+    empty-removed: "<yellow>Son dilim alındı, şiş boşaldı ve kaldırıldı.</yellow>"
+
+en:
+  no-permission: "<red>You do not have permission to use this command.</red>"
+  config-reloaded: "<green>TavukDoner configuration reloaded.</green>"
+  version-info: "<gold>TavukDoner</gold> <yellow>v<version></yellow> <gray>- Let delicious doners begin!</gray>"
+  protection:
+    denied: "<red>You cannot build here: <reason></red>"
+  items:
+    slice-name: "<gold>Doner Slice</gold>"
+    slice-lore:
+      - "<yellow>Freshly sliced delicious chicken doner slice.</yellow>"
+    wrap-name: "<gold>Chicken Doner Sandwich</gold>"
+    wrap-lore:
+      - "<yellow>Delicious chicken doner served in fresh bread.</yellow>"
+    wrap-tier-1: "<gray>Tier 1: Classic Doner Sandwich</gray>"
+    wrap-tier-2: "<blue>Tier 2: Rich Topping Doner</blue>"
+    wrap-tier-3: "<green>Tier 3: Fully Loaded Doner Sandwich</green>"
+  skewer:
+    placed: "<green>Doner skewer placed successfully!</green>"
+    layer-added: "<green>Chicken meat added to skewer (<yellow><layers></yellow>/<gold><max></gold>).</green>"
+    full: "<red>This skewer is already full! Cannot add more meat.</red>"
+    limit: "<red>Maximum skewers limit reached in this chunk!</red>"
+    player-limit: "<red>You have reached your personal maximum skewer limit!</red>"
+    removed: "<yellow>Doner skewer removed and items dropped.</yellow>"
+    no-permission: "<red>You do not have permission to interact with doner skewers.</red>"
+    sliced: "<green>Doner sliced! Remaining layers: <yellow><layers></yellow></green>"
+    not-cooked: "<red>There is no cooked meat on the skewer yet!</red>"
+    empty-removed: "<yellow>Last slice taken, skewer emptied and removed.</yellow>"

@@ -1,0 +1,20 @@
+name: TavukDoner
+version: '${version}'
+main: dev.tavukdoner.TavukDonerPlugin
+api-version: '26.3'
+softdepend: [GriefPrevention]
+description: TavukDoner Minecraft Paper Plugin
+
+commands:
+  tavukdoner:
+    description: TavukDoner ana komutu.
+    aliases: [doner]
+    permission: tavukdoner.use
+
+permissions:
+  tavukdoner.use:
+    description: TavukDoner temel komut ve ozelliklerini kullanma izni.
+    default: true
+  tavukdoner.admin:
+    description: TavukDoner yonetici komutlarini kullanma izni.
+    default: op
