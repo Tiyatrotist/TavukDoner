@@ -11,7 +11,8 @@ max-skewers-per-player: 4
 rod-material: BLAZE_ROD
 
 # Bir şişe takılabilecek maksimum et katmanı sayısı (katman sayısı arttıkça entity artar: katman + 3)
-max-layers: 16
+# 20 katman şiş çubuğunun tamamını doldurur; daha fazlası çubuğun dışına taşar (üst sınır 20)
+max-layers: 20
 
 # Şiş görünüm ayarları
 look:
@@ -24,8 +25,8 @@ look:
     - ORANGE_TERRACOTTA
     - BROWN_TERRACOTTA
 
-# Etin tamamen pişmesi için gereken süre (saniye cinsinden)
-cook-time-seconds: 120
+# Dolu şişin tamamen pişmesi için gereken süre (saniye); katmanlar alttan üste sırayla pişer
+cook-time-seconds: 300
 
 # Pişirme ve ısı kontrolü aralığı (tick cinsinden, varsayılan 20 = 1 saniye)
 tick-interval-ticks: 20

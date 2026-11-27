@@ -36,7 +36,7 @@ public final class SkewerManager {
     private int maxLayers = 16;
     private List<Material> rawBlocks = new ArrayList<>(DEFAULT_RAW_BLOCKS);
     private List<Material> cookedBlocks = new ArrayList<>(DEFAULT_COOKED_BLOCKS);
-    private long cookTicks = 120L * 20L;
+    private long cookTicks = 300L * 20L;
     private int maxSkewersPerChunk = 8;
     private int maxSkewersPerPlayer = 4;
     private long tickIntervalTicks = 20L;
@@ -60,11 +60,11 @@ public final class SkewerManager {
         Material matched = Material.matchMaterial(rodName);
         this.rodMaterial = matched != null ? matched : Material.BLAZE_ROD;
 
-        this.maxLayers = Math.min(24, Math.max(1, plugin.getConfig().getInt("max-layers", 16)));
+        this.maxLayers = Math.min(20, Math.max(1, plugin.getConfig().getInt("max-layers", 20)));
         this.rawBlocks = loadBlockList("look.raw-blocks", DEFAULT_RAW_BLOCKS);
         this.cookedBlocks = loadBlockList("look.cooked-blocks", DEFAULT_COOKED_BLOCKS);
 
-        long cookSeconds = Math.max(1L, plugin.getConfig().getLong("cook-time-seconds", 120L));
+        long cookSeconds = Math.max(1L, plugin.getConfig().getLong("cook-time-seconds", 300L));
         this.cookTicks = cookSeconds * 20L;
         this.maxSkewersPerChunk = Math.max(1, plugin.getConfig().getInt("max-skewers-per-chunk", 8));
         this.maxSkewersPerPlayer = Math.max(0, plugin.getConfig().getInt("max-skewers-per-player", 4));
