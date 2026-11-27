@@ -13,6 +13,8 @@ import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
@@ -27,8 +29,13 @@ public final class SkewerManager {
     private final Map<ChunkKey, Map<BlockKey, Skewer>> skewersByChunk = new ConcurrentHashMap<>();
     private final Map<UUID, Skewer> interactionToSkewer = new ConcurrentHashMap<>();
 
+    private static final List<Material> DEFAULT_RAW_BLOCKS = List.of(Material.PINK_TERRACOTTA, Material.WHITE_TERRACOTTA);
+    private static final List<Material> DEFAULT_COOKED_BLOCKS = List.of(Material.ORANGE_TERRACOTTA, Material.BROWN_TERRACOTTA);
+
     private Material rodMaterial = Material.BLAZE_ROD;
-    private int maxLayers = 8;
+    private int maxLayers = 16;
+    private List<Material> rawBlocks = new ArrayList<>(DEFAULT_RAW_BLOCKS);
+    private List<Material> cookedBlocks = new ArrayList<>(DEFAULT_COOKED_BLOCKS);
     private long cookTicks = 120L * 20L;
     private int maxSkewersPerChunk = 8;
     private int maxSkewersPerPlayer = 4;
@@ -53,7 +60,10 @@ public final class SkewerManager {
         Material matched = Material.matchMaterial(rodName);
         this.rodMaterial = matched != null ? matched : Material.BLAZE_ROD;
 
-        this.maxLayers = Math.max(1, plugin.getConfig().getInt("max-layers", 8));
+        this.maxLayers = Math.min(24, Math.max(1, plugin.getConfig().getInt("max-layers", 16)));
+        this.rawBlocks = loadBlockList("look.raw-blocks", DEFAULT_RAW_BLOCKS);
+        this.cookedBlocks = loadBlockList("look.cooked-blocks", DEFAULT_COOKED_BLOCKS);
+
         long cookSeconds = Math.max(1L, plugin.getConfig().getLong("cook-time-seconds", 120L));
         this.cookTicks = cookSeconds * 20L;
         this.maxSkewersPerChunk = Math.max(1, plugin.getConfig().getInt("max-skewers-per-chunk", 8));
@@ -66,6 +76,37 @@ public final class SkewerManager {
         if (cookingBukkitTask != null) {
             startCookingTask();
         }
+
+        for (Map.Entry<ChunkKey, Map<BlockKey, Skewer>> entry : skewersByChunk.entrySet()) {
+            ChunkKey chunkKey = entry.getKey();
+            World world = Bukkit.getWorld(chunkKey.world());
+            if (world != null && world.isChunkLoaded(chunkKey.x(), chunkKey.z())) {
+                for (Skewer skewer : entry.getValue().values()) {
+                    renderer.refresh(skewer);
+                }
+            }
+        }
+    }
+
+    private @NotNull List<Material> loadBlockList(@NotNull String path, @NotNull List<Material> defaultList) {
+        List<String> stringList = plugin.getConfig().getStringList(path);
+        List<Material> result = new ArrayList<>();
+        for (String name : stringList) {
+            if (name == null || name.isBlank()) {
+                continue;
+            }
+            Material mat = Material.matchMaterial(name.trim());
+            if (mat != null && mat.isBlock()) {
+                result.add(mat);
+            } else {
+                plugin.getLogger().warning("Geçersiz veya blok olmayan materyal atlandı ('" + path + "'): " + name);
+            }
+        }
+        if (result.isEmpty()) {
+            plugin.getLogger().warning("'" + path + "' listesi boş veya geçersiz. Varsayılan bloklar kullanılıyor: " + defaultList);
+            return new ArrayList<>(defaultList);
+        }
+        return result;
     }
 
     public void onEnable() {
@@ -361,6 +402,14 @@ public final class SkewerManager {
 
     public float getSpinDegreesPerSecond() {
         return spinDegreesPerSecond;
+    }
+
+    public @NotNull List<Material> getRawBlocks() {
+        return rawBlocks;
+    }
+
+    public @NotNull List<Material> getCookedBlocks() {
+        return cookedBlocks;
     }
 
     public Material getRodMaterial() {

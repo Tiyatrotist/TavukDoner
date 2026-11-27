@@ -1,4 +1,4 @@
-# TavukDoner
+﻿# TavukDoner
 
 🇹🇷 [Türkçe](#türkçe) · 🇬🇧 [English](#english)
 
@@ -10,7 +10,7 @@ Paper 26.3 için vanilla'yı ezmeyen, tek jar'lık, bağımlılıksız tavuk dö
 
 ### Nasıl oynanır
 1. **Şiş kur:** Elinde blaze rod ile katı bir bloğun **üst yüzüne** sağ tıkla. Şiş (item display'lerden yapılmış, kaynak paketsiz) belirir.
-2. **Et ekle:** Şişe çiğ tavukla sağ tıkla. Her tavuk bir katman ekler (en fazla 8), katmanlar koni gibi dizilir.
+2. **Et ekle:** Şişe çiğ tavukla sağ tıkla. Her tavuk bir katman ekler (en fazla 16), katmanlar üstte genişleyen hacimli bir döner konisi oluşturur.
 3. **Pişir:** Şişin yanına veya altına (±1 blok) **yanan kamp ateşi** koy. Şiş döner ve katmanlar alttan üste doğru kademeli pişer.
 4. **Dilimle:** Pişmiş şişe **herhangi bir kılıçla** sağ tıkla: "Döner Dilimi" düşer, bir katman azalır, kılıç aşınır. Katman bitince şiş kaybolur ve çubuk düşer.
 5. **Ye:** Tezgâhta şekilsiz tarifler:
@@ -59,7 +59,7 @@ MIT, bkz. [LICENSE](LICENSE).
 
 ### How to play
 1. **Build a skewer:** Right-click the **top face** of a solid block with a blaze rod. A skewer (made of item displays, no resource pack) appears.
-2. **Add meat:** Right-click the skewer with raw chicken. Each chicken adds a layer (max 8), stacked in a cone.
+2. **Add meat:** Right-click the skewer with raw chicken. Each chicken adds a layer (max 16), forming a volumetric doner cone, wider at the top.
 3. **Cook:** Put a **lit campfire** next to or under the skewer (±1 block). It spins and layers cook gradually from the bottom up.
 4. **Carve:** Right-click a cooked skewer with **any sword** to drop "Doner Slice" items. It removes one layer and damages the sword. When empty, the skewer disappears and the rod drops.
 5. **Eat:** Shapeless crafting recipes:

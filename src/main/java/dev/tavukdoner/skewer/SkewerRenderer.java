@@ -5,11 +5,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.entity.BlockDisplay;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Interaction;
-import org.bukkit.entity.ItemDisplay;
-import org.bukkit.entity.ItemDisplay.ItemDisplayTransform;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Transformation;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
@@ -34,14 +32,20 @@ public final class SkewerRenderer {
     }
 
     public static final class RenderedEntities {
+        private final UUID plateUuid;
         private final UUID rodUuid;
         private final List<UUID> meatUuids;
         private final UUID interactionUuid;
 
-        public RenderedEntities(UUID rodUuid, List<UUID> meatUuids, UUID interactionUuid) {
+        public RenderedEntities(UUID plateUuid, UUID rodUuid, List<UUID> meatUuids, UUID interactionUuid) {
+            this.plateUuid = plateUuid;
             this.rodUuid = rodUuid;
             this.meatUuids = meatUuids;
             this.interactionUuid = interactionUuid;
+        }
+
+        public UUID getPlateUuid() {
+            return plateUuid;
         }
 
         public UUID getRodUuid() {
@@ -65,6 +69,16 @@ public final class SkewerRenderer {
         this.manager = manager;
     }
 
+    public static Transformation boxTransform(float w, float h, float y, float yaw) {
+        Vector3f scale = new Vector3f(w, h, w);
+        Quaternionf leftRot = new Quaternionf().rotateY(yaw);
+        Vector3f offset = new Vector3f(w / 2f, 0f, w / 2f);
+        leftRot.transform(offset);
+        Vector3f translation = new Vector3f(0f, y, 0f).sub(offset);
+        Quaternionf rightRot = new Quaternionf();
+        return new Transformation(translation, leftRot, scale, rightRot);
+    }
+
     public void render(@NotNull Skewer skewer) {
         World world = Bukkit.getWorld(skewer.getWorld());
         if (world == null || !world.isChunkLoaded(skewer.getX() >> 4, skewer.getZ() >> 4)) {
@@ -76,56 +90,63 @@ public final class SkewerRenderer {
         Location baseLoc = new Location(world, skewer.getX() + 0.5, skewer.getY(), skewer.getZ() + 0.5);
         float spinAngle = skewer.getSpinAngle();
 
-        // 1) Rod ItemDisplay (~1.6 blocks high, vertical)
-        Material rodMaterial = manager.getRodMaterial();
-        ItemDisplay rodDisplay = world.spawn(baseLoc, ItemDisplay.class, display -> {
+        // 1) Tepsi (taban): SMOOTH_STONE bloğu, w=0.8, h=0.06, y=0
+        BlockDisplay plateDisplay = world.spawn(baseLoc, BlockDisplay.class, display -> {
             display.setPersistent(false);
-            display.setItemStack(new ItemStack(rodMaterial));
-            display.setItemDisplayTransform(ItemDisplayTransform.FIXED);
-
-            Vector3f translation = new Vector3f(0f, 0.8f, 0f);
-            Quaternionf leftRot = new Quaternionf().rotateY(spinAngle);
-            Vector3f scale = new Vector3f(0.35f, 1.6f, 0.35f);
-            Quaternionf rightRot = new Quaternionf().rotateZ((float) Math.toRadians(-45));
-            display.setTransformation(new Transformation(translation, leftRot, scale, rightRot));
+            display.setBlock(Material.SMOOTH_STONE.createBlockData());
+            display.setTransformation(boxTransform(0.8f, 0.06f, 0f, 0f));
         });
 
-        // 2) Meat ItemDisplays (conical: 0.35 + 0.07 * i, yOffset: 0.20 + 0.17 * i)
+        // 2) Şiş çubuğu: IRON_BLOCK bloğu, w=0.06, h=2.05, y=0.06. Dönmez (sabit).
+        BlockDisplay rodDisplay = world.spawn(baseLoc, BlockDisplay.class, display -> {
+            display.setPersistent(false);
+            display.setBlock(Material.IRON_BLOCK.createBlockData());
+            display.setTransformation(boxTransform(0.06f, 2.05f, 0.06f, 0f));
+        });
+
+        // 3) Et katmanları: layers adet BlockDisplay
         List<UUID> meatUuids = new ArrayList<>();
-        int cookedCount = skewer.cookedLayers(manager.getCookTicks());
-        Quaternionf baseMeatRot = new Quaternionf().rotateX((float) Math.toRadians(90));
-        Quaternionf meatLeftRot = new Quaternionf().rotateY(spinAngle).mul(baseMeatRot);
-        Quaternionf meatRightRot = new Quaternionf();
+        int layers = skewer.getLayers();
+        int cookedLayers = skewer.cookedLayers(manager.getCookTicks());
+        List<Material> rawBlocks = manager.getRawBlocks();
+        List<Material> cookedBlocks = manager.getCookedBlocks();
 
-        for (int i = 0; i < skewer.getLayers(); i++) {
+        for (int i = 0; i < layers; i++) {
             final int layerIndex = i;
-            Material meatMaterial = (layerIndex < cookedCount) ? Material.COOKED_CHICKEN : Material.CHICKEN;
-            ItemDisplay meatDisplay = world.spawn(baseLoc, ItemDisplay.class, display -> {
+            float h = 0.105f;
+            float y = 0.10f + 0.10f * layerIndex;
+            float w = 0.34f + 0.02f * layerIndex;
+            float baseYaw = (layerIndex % 2 != 0) ? (float) Math.toRadians(45) : 0f;
+            float yaw = baseYaw + spinAngle;
+
+            boolean isCooked = layerIndex < cookedLayers;
+            List<Material> blockList = isCooked ? cookedBlocks : rawBlocks;
+            Material material = blockList.get(layerIndex % blockList.size());
+
+            BlockDisplay meatDisplay = world.spawn(baseLoc, BlockDisplay.class, display -> {
                 display.setPersistent(false);
-                display.setItemStack(new ItemStack(meatMaterial));
-                display.setItemDisplayTransform(ItemDisplayTransform.FIXED);
-
-                float s = (float) (0.35 + 0.07 * layerIndex);
-                float yOffset = (float) (0.20 + 0.17 * layerIndex);
-
-                Vector3f translation = new Vector3f(0f, yOffset, 0f);
-                Vector3f scale = new Vector3f(s, s, s);
-                display.setTransformation(new Transformation(translation, meatLeftRot, scale, meatRightRot));
+                display.setBlock(material.createBlockData());
+                display.setTransformation(boxTransform(w, h, y, yaw));
             });
             meatUuids.add(meatDisplay.getUniqueId());
         }
 
-        // 3) Interaction entity (width ~0.7, height ~1.7)
+        // 4) Interaction: genişlik 0.8, yükseklik 2.05 (çubuk boyu)
         Interaction interaction = world.spawn(baseLoc, Interaction.class, entity -> {
             entity.setPersistent(false);
-            entity.setInteractionWidth(0.7f);
-            entity.setInteractionHeight(1.7f);
+            entity.setInteractionWidth(0.8f);
+            entity.setInteractionHeight(2.05f);
             entity.setResponsive(true);
         });
 
         manager.registerInteraction(interaction.getUniqueId(), skewer);
 
-        RenderedEntities rendered = new RenderedEntities(rodDisplay.getUniqueId(), meatUuids, interaction.getUniqueId());
+        RenderedEntities rendered = new RenderedEntities(
+                plateDisplay.getUniqueId(),
+                rodDisplay.getUniqueId(),
+                meatUuids,
+                interaction.getUniqueId()
+        );
         renderedSkewers.put(RenderKey.from(skewer), rendered);
     }
 
@@ -140,6 +161,10 @@ public final class SkewerRenderer {
 
         World world = Bukkit.getWorld(skewer.getWorld());
         if (world != null) {
+            Entity plate = world.getEntity(rendered.getPlateUuid());
+            if (plate != null) {
+                plate.remove();
+            }
             Entity rod = world.getEntity(rendered.getRodUuid());
             if (rod != null) {
                 rod.remove();
@@ -189,37 +214,20 @@ public final class SkewerRenderer {
             return;
         }
 
-        // 1) Rod transformasyonunu güncelle
-        Entity rodEntity = world.getEntity(rendered.getRodUuid());
-        if (rodEntity instanceof ItemDisplay rodDisplay) {
-            Vector3f translation = new Vector3f(0f, 0.8f, 0f);
-            Quaternionf leftRot = new Quaternionf().rotateY(newSpinAngle);
-            Vector3f scale = new Vector3f(0.35f, 1.6f, 0.35f);
-            Quaternionf rightRot = new Quaternionf().rotateZ((float) Math.toRadians(-45));
-
-            rodDisplay.setInterpolationDelay(0);
-            rodDisplay.setInterpolationDuration(intervalTicks);
-            rodDisplay.setTransformation(new Transformation(translation, leftRot, scale, rightRot));
-        }
-
-        // 2) Et katmanlarının transformasyonunu güncelle
-        Quaternionf baseMeatRot = new Quaternionf().rotateX((float) Math.toRadians(90));
-        Quaternionf meatLeftRot = new Quaternionf().rotateY(newSpinAngle).mul(baseMeatRot);
-        Quaternionf meatRightRot = new Quaternionf();
-
+        // Yalnız et katmanlarının dönüşünü güncelle, çubuk ve tepsi sabit kalır
         List<UUID> meatUuids = rendered.getMeatUuids();
         for (int i = 0; i < meatUuids.size(); i++) {
             Entity meatEntity = world.getEntity(meatUuids.get(i));
-            if (meatEntity instanceof ItemDisplay meatDisplay) {
-                float s = (float) (0.35 + 0.07 * i);
-                float yOffset = (float) (0.20 + 0.17 * i);
-
-                Vector3f translation = new Vector3f(0f, yOffset, 0f);
-                Vector3f scale = new Vector3f(s, s, s);
+            if (meatEntity instanceof BlockDisplay meatDisplay) {
+                float h = 0.105f;
+                float y = 0.10f + 0.10f * i;
+                float w = 0.34f + 0.02f * i;
+                float baseYaw = (i % 2 != 0) ? (float) Math.toRadians(45) : 0f;
+                float yaw = baseYaw + newSpinAngle;
 
                 meatDisplay.setInterpolationDelay(0);
                 meatDisplay.setInterpolationDuration(intervalTicks);
-                meatDisplay.setTransformation(new Transformation(translation, meatLeftRot, scale, meatRightRot));
+                meatDisplay.setTransformation(boxTransform(w, h, y, yaw));
             }
         }
     }
@@ -231,6 +239,10 @@ public final class SkewerRenderer {
                 manager.unregisterInteraction(rendered.getInteractionUuid());
                 World world = Bukkit.getWorld(key.world());
                 if (world != null) {
+                    Entity plate = world.getEntity(rendered.getPlateUuid());
+                    if (plate != null) {
+                        plate.remove();
+                    }
                     Entity rod = world.getEntity(rendered.getRodUuid());
                     if (rod != null) {
                         rod.remove();

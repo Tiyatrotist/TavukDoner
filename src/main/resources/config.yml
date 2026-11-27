@@ -10,8 +10,19 @@ max-skewers-per-player: 4
 # Şiş çubuğu için kullanılacak eşya materyali
 rod-material: BLAZE_ROD
 
-# Bir şişe takılabilecek maksimum et katmanı sayısı
-max-layers: 8
+# Bir şişe takılabilecek maksimum et katmanı sayısı (katman sayısı arttıkça entity artar: katman + 3)
+max-layers: 16
+
+# Şiş görünüm ayarları
+look:
+  # Çiğ et katmanları için kullanılacak bloklar (liste sırayla tekrarlanır)
+  raw-blocks:
+    - PINK_TERRACOTTA
+    - WHITE_TERRACOTTA
+  # Pişmiş et katmanları için kullanılacak bloklar (liste sırayla tekrarlanır)
+  cooked-blocks:
+    - ORANGE_TERRACOTTA
+    - BROWN_TERRACOTTA
 
 # Etin tamamen pişmesi için gereken süre (saniye cinsinden)
 cook-time-seconds: 120
